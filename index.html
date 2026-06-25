@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ornn Security Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:     #000000;
+      --off-black: #0a0a0a;
+      --panel:     #0f0f0f;
+      --white:     #ffffff;
+      --dim:       #555555;
+      --mid:       #888888;
+      --border:    rgba(255,255,255,0.10);
+      --border-hi: rgba(255,255,255,0.30);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.4rem 3rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(0,0,0,0.93);
+      border-color: var(--border);
+      backdrop-filter: blur(14px);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+    }
+    .nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.2em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .nav-logo-text small {
+      display: block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      margin-top: 1px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: var(--dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--white);
+      border: none;
+      padding: 0.6rem 1.4rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 50%, transparent 20%, rgba(0,0,0,0.7) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-text {
+      position: relative;
+      z-index: 2;
+      max-width: 560px;
+    }
+    .eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.24em;
+      color: var(--mid);
+      text-transform: uppercase;
+      margin-bottom: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--mid);
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.2rem, 6.5vw, 6rem);
+      line-height: 0.93;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      margin-bottom: 1.8rem;
+    }
+    h1 .outline {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: var(--dim);
+      max-width: 420px;
+      margin-bottom: 2.6rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--white);
+      border: 1px solid var(--white);
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover { background: transparent; color: var(--white); }
+    .btn-ghost {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 0.85rem 2rem;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--border-hi); color: var(--white); }
+
+    /* Hero image */
+    .hero-visual {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-visual img {
+      width: min(400px, 88%);
+      animation: float 7s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-16px); }
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-flex;
+      gap: 4rem;
+      animation: tick 30s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .ticker-item b { color: var(--white); font-weight: 400; margin-right: 0.35rem; }
+    @keyframes tick {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 7rem 3rem; }
+    .label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 0.7rem;
+    }
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .section-intro {
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--dim);
+      max-width: 600px;
+      margin-bottom: 4rem;
+    }
+
+    /* ── MODULES GRID ── */
+    .modules {
+      border-top: 1px solid var(--border);
+    }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+    .module-card {
+      background: var(--panel);
+      padding: 3rem 2.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .module-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
+    }
+    .module-card:hover { background: #141414; }
+    .module-card:hover .module-line { width: 100%; }
+
+    .module-line {
+      position: absolute;
+      top: 0; left: 0;
+      height: 1px;
+      width: 0;
+      background: var(--white);
+      transition: width 0.5s ease;
+    }
+    .module-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1.6rem;
+      display: inline-block;
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+    }
+    .module-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .module-full {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+    .module-desc {
+      font-size: 0.85rem;
+      line-height: 1.85;
+      color: var(--mid);
+      margin-bottom: 1.8rem;
+    }
+    .module-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .module-list li {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .module-list li::before {
+      content: '→';
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      border-top: 1px solid var(--border);
+    }
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+    .how-step {
+      background: var(--panel);
+      padding: 2.4rem 1.8rem;
+      position: relative;
+    }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      line-height: 1;
+      color: rgba(255,255,255,0.06);
+      margin-bottom: 1rem;
+    }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      margin-bottom: 0.7rem;
+    }
+    .step-desc {
+      font-size: 0.78rem;
+      line-height: 1.75;
+      color: var(--dim);
+    }
+
+    /* ── FOR WHO ── */
+    .forwho {
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .forwho-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      letter-spacing: 0.05em;
+      line-height: 1.12;
+      color: var(--white);
+    }
+    .forwho-quote em {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+    }
+    .forwho-content .label { margin-bottom: 1.2rem; }
+    .forwho-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .forwho-item {
+      padding: 1.2rem 1.4rem;
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--white);
+    }
+    .forwho-item-title {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .forwho-item-desc {
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--dim);
+    }
+
+    /* ── CONTACT ── */
+    .contact {
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .contact h2 { margin-bottom: 0.8rem; }
+    .contact .section-intro { margin: 0 auto 2.8rem; }
+    .contact-whatsapp {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 1rem 2.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .contact-whatsapp:hover {
+      border-color: var(--border-hi);
+      background: rgba(255,255,255,0.04);
+    }
+    .contact-whatsapp svg { flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+    }
+    .footer-copy {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      color: var(--dim);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .modules-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; }
+      .hero-visual { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .forwho { grid-template-columns: 1fr; gap: 3rem; }
+      .how-steps { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.8rem; text-align: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-visual img { animation: none; }
+      .ticker-inner { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">
+      <img src="ornnsec_logo_final_dark.png" alt="Ornn" />
+      <div class="nav-logo-text">
+        Ornn
+        <small>Security Intelligence</small>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#modulos">Módulos</a></li>
+      <li><a href="#como-funciona">Como Funciona</a></li>
+      <li><a href="#para-quem">Para Quem</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <a href="#contato" class="nav-cta">Solicitar Demo</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-text">
+      <p class="eyebrow">Plataforma CTI</p>
+      <h1>Inteligência<br/>que sua equipe<br/><span class="outline">precisa.</span></h1>
+      <p class="hero-sub">
+        Ornn Security Intelligence unifica Cyber Threat Intelligence, gestão de superfície de ataque externa, proteção de marca e contexto geopolítico em uma única plataforma operacional para Blue Teams.
+      </p>
+      <div class="hero-actions">
+        <a href="#contato" class="btn-primary">Solicitar Demo</a>
+        <a href="#modulos" class="btn-ghost">Ver Módulos</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="ornnsec_logo_final_dark.png" alt="Ornn Security Intelligence" />
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item"><b>//</b> Cyber Threat Intelligence</span>
+      <span class="ticker-item"><b>//</b> EASM</span>
+      <span class="ticker-item"><b>//</b> Digital Risk Protection</span>
+      <span class="ticker-item"><b>//</b> Geopolítica & Ameaças</span>
+      <span class="ticker-item"><b>//</b> Dark Web Monitoring</span>
+      <span class="ticker-item"><b>//</b> Threat Actors</span>
+      <span class="ticker-item"><b>//</b> Exposição de Credenciais</span>
+      <span class="ticker-item"><b>//</b> Attack Surface</span>
+      <span class="ticker-item"><b>//</b> Cyber Threat Intelligence</span>
+      <span class="ticker-item"><b>//</b> EASM</span>
+      <span class="ticker-item"><b>//</b> Digital Risk Protection</span>
+      <span class="ticker-item"><b>//</b> Geopolítica & Ameaças</span>
+      <span class="ticker-item"><b>//</b> Dark Web Monitoring</span>
+      <span class="ticker-item"><b>//</b> Threat Actors</span>
+      <span class="ticker-item"><b>//</b> Exposição de Credenciais</span>
+      <span class="ticker-item"><b>//</b> Attack Surface</span>
+    </div>
+  </div>
+
+  <!-- MODULES -->
+  <section id="modulos" class="modules">
+    <p class="label">O que a plataforma entrega</p>
+    <h2>Módulos</h2>
+    <p class="section-intro">Quatro disciplinas integradas em uma interface única, alimentando seu time com contexto acionável — não apenas dados brutos.</p>
+
+    <div class="modules-grid">
+
+      <!-- CTI -->
+      <div class="module-card">
+        <div class="module-line"></div>
+        <span class="module-tag">Módulo 01</span>
+        <p class="module-title">CTI</p>
+        <p class="module-full">Cyber Threat Intelligence</p>
+        <p class="module-desc">
+          Inteligência estratégica, tática e operacional sobre ameaças relevantes ao seu setor e região. A plataforma correlaciona IOCs, TTPs e campanhas ativas, entregando contexto que transforma alertas em decisões.
+        </p>
+        <ul class="module-list">
+          <li>Monitoramento contínuo de threat actors e grupos APT</li>
+          <li>Correlação de IOCs com infraestrutura interna via integração SIEM</li>
+          <li>Mapeamento de TTPs no framework MITRE ATT&CK</li>
+          <li>Relatórios de inteligência prontos para o nível executivo</li>
+          <li>Feeds customizados por setor, tecnologia e região</li>
+        </ul>
+      </div>
+
+      <!-- EASM -->
+      <div class="module-card">
+        <div class="module-line"></div>
+        <span class="module-tag">Módulo 02</span>
+        <p class="module-title">EASM</p>
+        <p class="module-full">External Attack Surface Management</p>
+        <p class="module-desc">
+          Visibilidade contínua e automatizada de tudo que está exposto ao exterior — antes que um atacante descubra. A Ornn mapeia ativos conhecidos e desconhecidos, prioriza exposições e acompanha a evolução da superfície ao longo do tempo.
+        </p>
+        <ul class="module-list">
+          <li>Descoberta automática de domínios, subdomínios e IPs</li>
+          <li>Detecção de serviços expostos, portas abertas e tecnologias</li>
+          <li>Identificação de certificados expirados e configurações incorretas</li>
+          <li>Priorização de exposições por risco e exploitabilidade</li>
+          <li>Visão histórica da superfície de ataque ao longo do tempo</li>
+        </ul>
+      </div>
+
+      <!-- DRP -->
+      <div class="module-card">
+        <div class="module-line"></div>
+        <span class="module-tag">Módulo 03</span>
+        <p class="module-title">DRP</p>
+        <p class="module-full">Digital Risk Protection</p>
+        <p class="module-desc">
+          Proteção da marca e dos ativos digitais contra ameaças externas: phishing, impersonation, vazamento de dados e exposição em canais não monitorados como dark web, fóruns e Telegram.
+        </p>
+        <ul class="module-list">
+          <li>Detecção de domínios typosquatting e phishing ativos</li>
+          <li>Monitoramento de credenciais e dados vazados em dark web</li>
+          <li>Alertas de impersonation em redes sociais e lojas de apps</li>
+          <li>Rastreamento de menções à marca em fóruns criminais</li>
+          <li>Fluxo de takedown assistido para remoção de conteúdo malicioso</li>
+        </ul>
+      </div>
+
+      <!-- GEOPOLITICA -->
+      <div class="module-card">
+        <div class="module-line"></div>
+        <span class="module-tag">Módulo 04</span>
+        <p class="module-title">Geopolítica</p>
+        <p class="module-full">Geopolitical Threat Intelligence</p>
+        <p class="module-desc">
+          Conflitos, sanções, hacktivismo e tensões regionais impactam diretamente o perfil de ameaça de qualquer organização. A Ornn traduz o cenário geopolítico em risco cibernético concreto para o seu negócio.
+        </p>
+        <ul class="module-list">
+          <li>Análise de impacto de eventos geopolíticos no seu setor</li>
+          <li>Rastreamento de grupos hacktivistas e campanhas de estado-nação</li>
+          <li>Correlação entre tensões regionais e aumento de ataques</li>
+          <li>Alertas antecipados sobre campanhas motivadas politicamente</li>
+          <li>Relatórios semanais de cenário para CISOs e equipes de gestão de risco</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="como-funciona" class="how">
+    <p class="label">Fluxo operacional</p>
+    <h2>Como Funciona</h2>
+    <p class="section-intro">Da coleta ao alerta, tudo automatizado — para que seu time foque em resposta, não em triagem manual.</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <p class="step-title">Coleta Contínua</p>
+        <p class="step-desc">A plataforma ingere fontes abertas, fechadas e da dark web em tempo real, cruzando dados com o contexto específico da sua organização.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <p class="step-title">Correlação & Enriquecimento</p>
+        <p class="step-desc">IOCs são enriquecidos automaticamente com contexto de campanha, ator, TTP e relevância geográfica antes de chegarem ao analista.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <p class="step-title">Priorização por Risco</p>
+        <p class="step-desc">Score de risco dinâmico filtra o ruído e entrega apenas o que exige atenção imediata do seu SOC, com severidade e contexto de negócio.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04</div>
+        <p class="step-title">Ação & Integração</p>
+        <p class="step-desc">Alertas, relatórios e IOCs exportados diretamente para SIEM, SOAR ou e-mail — com playbooks prontos para resposta imediata.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR WHO -->
+  <section id="para-quem" class="forwho">
+    <div>
+      <p class="forwho-quote">Feito para<br/>quem <em>defende</em><br/>na prática.</p>
+    </div>
+    <div class="forwho-content">
+      <p class="label">Para quem é a plataforma</p>
+      <div class="forwho-items">
+        <div class="forwho-item">
+          <p class="forwho-item-title">Analistas de SOC (N2 / N3)</p>
+          <p class="forwho-item-desc">Contexto imediato para triagem de alertas, identificação de campanha e correlação de incidentes — reduzindo o tempo médio de resposta.</p>
+        </div>
+        <div class="forwho-item">
+          <p class="forwho-item-title">Times de Threat Intelligence</p>
+          <p class="forwho-item-desc">Plataforma centralizada para produção de relatórios, gestão de fontes, rastreamento de atores e exportação de feeds para parceiros internos.</p>
+        </div>
+        <div class="forwho-item">
+          <p class="forwho-item-title">CISOs & Gestão de Risco</p>
+          <p class="forwho-item-desc">Visão executiva do cenário de ameaças, exposição da organização e tendências geopolíticas relevantes ao negócio — em linguagem de risco, não técnica.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contato" class="contact">
+    <p class="label">Contato</p>
+    <h2>Agende uma Demo</h2>
+    <p class="section-intro">Entre em contato via WhatsApp para agendar uma demonstração da plataforma com o nosso time.</p>
+    <a href="https://wa.me/5515996776598" target="_blank" class="contact-whatsapp">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      +55 15 99677-6598
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Ornn Security Intelligence</span>
+    <span class="footer-copy">© 2025 OrnnSec — Todos os direitos reservados</span>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+
+</body>
+</html>
